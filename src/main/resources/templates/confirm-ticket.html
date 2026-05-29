@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirm Booking | BookMyTicket</title>
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap"
+	rel="stylesheet">
+
+<style>
+:root {
+	--bg-main: #0f172a;
+	--bg-card: #111827;
+	--border-soft: #1f2937;
+	--text-main: #e5e7eb;
+	--text-muted: #9ca3af;
+	--accent: #e74c3c;
+	--success: #22c55e;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Poppins", sans-serif;
+	background: radial-gradient(circle at top, #1e293b, var(--bg-main));
+	min-height: 100vh;
+	color: var(--text-main);
+	padding: 30px 15px;
+}
+
+/* Container */
+.container {
+	max-width: 900px;
+}
+
+/* Card */
+.card {
+	background: linear-gradient(180deg, #111827, #0b1220);
+	border-radius: 20px;
+	border: 1px solid var(--border-soft);
+	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.65);
+	padding: 35px;
+	animation: fadeInUp 0.6s ease;
+}
+
+/* Section title */
+.section-title {
+	font-weight: 800;
+	font-size: 1.25rem;
+	margin-bottom: 18px;
+	letter-spacing: 0.4px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Info rows */
+.info-row {
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 1px dashed var(--border-soft);
+	padding: 10px 0;
+	font-size: 0.95rem;
+}
+
+.info-row span {
+	color: var(--text-muted);
+}
+
+/* Seats */
+.seat-box {
+	display: inline-block;
+	background: linear-gradient(135deg, #22c55e, #16a34a);
+	color: white;
+	padding: 6px 14px;
+	border-radius: 20px;
+	margin: 5px;
+	font-weight: 700;
+	font-size: 0.85rem;
+	box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
+}
+
+/* Price */
+.total {
+	font-size: 1.3rem;
+	font-weight: 900;
+	color: var(--success);
+	margin-top: 10px;
+}
+
+/* Buttons */
+.btn-cancel {
+	background: transparent;
+	border: 1px solid var(--border-soft);
+	color: var(--text-muted);
+	padding: 10px 18px;
+	border-radius: 10px;
+	font-weight: 600;
+	transition: all 0.25s ease;
+}
+
+.btn-cancel:hover {
+	color: white;
+	border-color: var(--text-main);
+}
+
+.btn-confirm {
+	background: linear-gradient(135deg, #e74c3c, #ff6b6b);
+	border: none;
+	color: white;
+	padding: 12px 26px;
+	border-radius: 12px;
+	font-weight: 700;
+	transition: all 0.25s ease;
+	box-shadow: 0 12px 30px rgba(231, 76, 60, 0.45);
+}
+
+.btn-confirm:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 45px rgba(231, 76, 60, 0.6);
+}
+
+/* Animation */
+@keyframes fadeInUp {from { opacity:0;
+	transform: translateY(20px);
+}
+
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+}
+@media ( max-width : 768px) {
+	.card {
+		padding: 25px;
+	}
+	.info-row {
+		flex-direction: column;
+		gap: 4px;
+	}
+}
+</style>
+</head>
+
+<body>
+
+	<div class="container">
+
+		<div class="card">
+
+			<!-- MOVIE DETAILS -->
+			<h3 class="section-title">🎬 Movie Details</h3>
+
+			<div class="info-row">
+				<strong>Movie</strong> <span th:text="${show.movie.name}"></span>
+			</div>
+
+			<div class="info-row">
+				<strong>Date</strong> <span th:text="${show.showDate}"></span>
+			</div>
+
+			<div class="info-row">
+				<strong>Time</strong> <span> <span
+					th:text="${show.startTime}"></span> - <span
+					th:text="${show.endTime}"></span>
+				</span>
+			</div>
+
+			<hr>
+
+			<!-- SEATS -->
+			<h3 class="section-title">🪑 Selected Seats</h3>
+
+			<div>
+				<span th:each="seat : ${showSeats}" class="seat-box"
+					th:text="${seat.seat.seatNumber}"> </span>
+			</div>
+
+			<hr>
+
+			<!-- PRICE -->
+			<h3 class="section-title">💰 Price Summary</h3>
+
+			<div class="info-row">
+				<strong>Ticket Price</strong> <span>₹ <span
+					th:text="${show.ticketPrice}"></span> × <span
+					th:text="${#lists.size(showSeats)}"></span></span>
+			</div>
+
+			<div class="total">
+				Total: ₹ <span
+					th:text="${show.ticketPrice * #lists.size(showSeats)}"></span>
+			</div>
+
+			<hr>
+
+			<!-- PAYMENT DISPLAY -->
+			<div class="text-center mt-4">
+				<div class="qr-container mb-4" style="background: white; padding: 10px; display: inline-block; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3)">
+					<img th:src="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=mjaahnagdaemv21@axl%26pn=BookMyTicket%26am=' + ${amount / 100} + '%26cu=INR'" 
+						 alt="UPI QR Code" style="width: 150px; height: 150px;">
+					<div class="mt-2 text-dark fw-bold" style="font-size: 0.8rem">Pay ₹<span th:text="${amount / 100}"></span></div>
+				</div>
+
+				<div id="paymentActions">
+					<div class="d-flex justify-content-center gap-2 flex-wrap">
+						<button class="btn btn-confirm" id="rzp-button1" style="background: #2980b9">
+							Pay via Razorpay</button>
+						<button class="btn btn-confirm" id="manualPayBtn" style="background: #27ae60">
+							I Have Paid via UPI</button>
+						<a href="/" class="btn btn-cancel">Cancel</a>
+					</div>
+				</div>
+
+				<!-- VERIFICATION ANIMATION -->
+				<div id="manualVerification" style="display: none;" class="mt-3">
+					<div class="spinner-border text-success mb-3" style="width: 3rem; height: 3rem;"></div>
+					<h6 class="fw-bold" id="verifyStatus">Verifying Payment...</h6>
+					<p class="text-muted small">Checking transaction status with your bank</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<form id="razorpayForm" th:action="@{/confirm-ticket}" method="POST" style="display:none;">
+		<input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+		<input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+		<input type="hidden" name="razorpay_signature" id="razorpay_signature">
+	</form>
+
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		// RAZORPAY
+		var options = {
+			"key" : "[[${key}]]",
+			"amount" : "[[${amount}]]",
+			"currency" : "[[${currency}]]",
+			"name" : "Book My Ticket",
+			"description" : "Movie Ticket Booking",
+			"image" : "https://miro.medium.com/v2/resize:fit:1024/1*S9eGTVGyjaDlkNOlnDj_jQ.png",
+			"order_id" : "[[${orderId}]]",
+			"handler": function (response){
+				document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+				document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+				document.getElementById('razorpay_signature').value = response.razorpay_signature;
+				document.getElementById('razorpayForm').submit();
+			},
+			"prefill" : {
+				"name" : "[[${user.name}]]",
+				"email" : "[[${user.email}]]",
+				"contact" : "[[${user.mobile}]]"
+			},
+			"theme" : { "color" : "#e74c3c" }
+		};
+
+		var rzp1 = new Razorpay(options);
+		document.getElementById("rzp-button1").onclick = function(e) {
+			rzp1.open();
+			e.preventDefault();
+		};
+
+		// MANUAL PAYMENT
+		document.getElementById("manualPayBtn").onclick = function() {
+			document.getElementById('paymentActions').style.display = 'none';
+			document.getElementById('manualVerification').style.display = 'block';
+			
+			var status = document.getElementById('verifyStatus');
+			
+			setTimeout(() => { status.innerHTML = "Authenticating with Bank UPI Server..."; }, 1500);
+			setTimeout(() => { status.innerHTML = "Payment Confirmed! Generating Ticket..."; status.className = "text-success fw-bold"; }, 4000);
+			
+			setTimeout(() => {
+				document.getElementById('razorpay_payment_id').value = "MANUAL_UPI_SUCCESS";
+				document.getElementById('razorpay_order_id').value = "[[${orderId}]]";
+				document.getElementById('razorpayForm').submit();
+			}, 6000);
+		};
+	</script>
+
+</body>
+</html>

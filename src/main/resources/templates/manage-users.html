@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Users | BookMyTicket</title>
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap"
+	rel="stylesheet">
+
+<style>
+:root {
+	--bg-main: #0f172a;
+	--bg-card: #111827;
+	--border: #1f2937;
+	--text-main: #e5e7eb;
+	--text-muted: #9ca3af;
+	--accent: #6496ff;
+	--success: #22c55e;
+	--danger: #ff4d6d;
+}
+
+/* ===== GLOBAL ===== */
+body {
+	font-family: "Poppins", sans-serif;
+	background: radial-gradient(circle at top, #1e293b, var(--bg-main));
+	color: var(--text-main);
+	min-height: 100vh;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+	background: #020617;
+	border-bottom: 1px solid var(--border);
+	padding: 1rem 2rem;
+}
+
+.navbar-brand {
+	font-weight: 900;
+	font-size: 1.4rem;
+	background: linear-gradient(135deg, var(--accent), #ff4081);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+	color: var(--text-muted) !important;
+	font-weight: 500;
+}
+
+.nav-link:hover {
+	color: var(--accent) !important;
+}
+
+/* ===== CONTAINER ===== */
+.admin-container {
+	max-width: 1200px;
+	margin: 50px auto;
+	padding: 0 20px;
+}
+
+/* ===== HEADER ===== */
+.admin-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin-bottom: 40px;
+}
+
+.admin-header h1 {
+	font-weight: 900;
+	font-size: 1.9rem;
+}
+
+.back-link {
+	background: linear-gradient(135deg, var(--accent), #ff4081);
+	color: white;
+	padding: .6rem 1.6rem;
+	border-radius: 12px;
+	font-weight: 700;
+	text-decoration: none;
+	box-shadow: 0 15px 35px rgba(100, 150, 255, .45);
+}
+
+.back-link:hover {
+	transform: translateY(-2px);
+	color: white;
+	box-shadow: 0 25px 55px rgba(100, 150, 255, .6);
+}
+
+/* ===== TABLE ===== */
+.table-wrapper {
+	background: linear-gradient(180deg, #111827, #0b1220);
+	border: 1px solid var(--border);
+	border-radius: 18px;
+	overflow: hidden;
+	box-shadow: 0 35px 80px rgba(0, 0, 0, .7);
+}
+
+.table {
+	margin: 0;
+	color: var(--text-main);
+}
+
+.table thead th {
+	background: #020617;
+	border-bottom: 1px solid var(--border);
+	font-size: .75rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: var(--text-muted);
+	padding: 16px;
+}
+
+.table tbody td {
+	padding: 16px;
+	border-color: var(--border);
+	font-size: .9rem;
+}
+
+.table tbody tr:hover {
+	background: rgba(100, 150, 255, .06);
+}
+
+/* ===== USER INFO ===== */
+.user-name {
+	font-weight: 600;
+}
+
+.user-email, .user-mobile {
+	color: var(--text-muted);
+	font-size: .85rem;
+}
+
+/* ===== ACTIONS ===== */
+.action-cell {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.btn-block {
+	background: rgba(255, 77, 109, .15);
+	color: var(--danger);
+	border: 1px solid var(--danger);
+	padding: .45rem .9rem;
+	font-size: .75rem;
+	font-weight: 700;
+	border-radius: 10px;
+	text-decoration: none;
+}
+
+.btn-block:hover {
+	background: var(--danger);
+	color: white;
+}
+
+.btn-unblock {
+	background: rgba(34, 197, 94, .15);
+	color: var(--success);
+	border: 1px solid var(--success);
+	padding: .45rem .9rem;
+	font-size: .75rem;
+	font-weight: 700;
+	border-radius: 10px;
+	text-decoration: none;
+}
+
+.btn-unblock:hover {
+	background: var(--success);
+	color: #022c22;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+	text-align: center;
+	padding: 90px 30px;
+	background: linear-gradient(180deg, #111827, #0b1220);
+	border: 1px solid var(--border);
+	border-radius: 20px;
+	box-shadow: 0 35px 80px rgba(0, 0, 0, .7);
+}
+
+.empty-state p {
+	color: var(--text-muted);
+	font-size: 1rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media ( max-width :768px) {
+	.admin-header h1 {
+		font-size: 1.5rem
+	}
+	.action-cell {
+		flex-direction: column
+	}
+}
+</style>
+</head>
+
+<body>
+
+	<nav class="navbar navbar-expand-lg">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/">🎬 BookMyTicket</a>
+			<div class="collapse navbar-collapse">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="/manage-users">Users</a></li>
+					<li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="admin-container">
+
+		<div class="admin-header">
+			<h1>👥 Manage Users</h1>
+			<a href="/" class="back-link">← Home</a>
+		</div>
+
+		<!-- TABLE -->
+		<div th:if="${users != null && users.size() > 0}"
+			class="table-wrapper">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Mobile</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user:${users}">
+						<td class="user-name" th:text="${user.name}"></td>
+						<td class="user-email" th:text="${user.email}"></td>
+						<td class="user-mobile" th:text="${user.mobile}"></td>
+						<td>
+							<div class="action-cell">
+								<a th:href="'/user-bookings/'+${user.id}"
+									class="btn-unblock" style="background: rgba(100,150,255,0.15); color: var(--accent); border-color: var(--accent)">Bookings</a>
+								<a th:if="${!user.blocked}" th:href="'/block/'+${user.id}"
+									class="btn-block">Block</a> <a th:if="${user.blocked}"
+									th:href="'/un-block/'+${user.id}" class="btn-unblock">Unblock</a>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- EMPTY -->
+		<div th:if="${users == null || users.size() == 0}" class="empty-state">
+			<p>No users found</p>
+		</div>
+
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookings | BookMyTicket</title>
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap"
+	rel="stylesheet">
+
+<style>
+:root {
+	--bg-main: #0f172a;
+	--bg-card: #111827;
+	--border: #1f2937;
+	--text-main: #e5e7eb;
+	--text-muted: #9ca3af;
+	--accent: #6496ff;
+	--accent-pink: #ff4081;
+}
+
+body {
+	font-family: "Poppins", sans-serif;
+	background: radial-gradient(circle at top, #1e293b, var(--bg-main));
+	color: var(--text-main);
+	min-height: 100vh;
+}
+
+.navbar {
+	background: rgba(17, 24, 39, .85) !important;
+	backdrop-filter: blur(14px);
+	border-bottom: 1px solid var(--border);
+	padding: .9rem 2rem;
+}
+
+.navbar-brand {
+	font-weight: 900;
+	font-size: 1.5rem;
+	background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+	color: var(--text-muted) !important;
+	font-weight: 600;
+}
+
+.booking-card {
+	background: linear-gradient(180deg, #111827, #0b1220);
+	border: 1px solid var(--border);
+	border-radius: 18px;
+	overflow: hidden;
+	box-shadow: 0 20px 45px rgba(0, 0, 0, .6);
+	transition: .4s ease;
+	margin-bottom: 2rem;
+}
+
+.booking-card:hover {
+	transform: translateY(-5px);
+	border-color: var(--accent);
+}
+
+.qr-section {
+	background: #fff;
+	padding: 10px;
+	border-radius: 12px;
+	display: inline-block;
+}
+
+.qr-section img {
+	width: 120px;
+	height: 120px;
+}
+
+.badge-custom {
+	background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+	border-radius: 8px;
+	padding: 5px 12px;
+	font-size: 0.8rem;
+}
+
+.btn-primary {
+	background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+	border: none;
+	font-weight: 700;
+	border-radius: 12px;
+}
+
+footer {
+	border-top: 1px solid var(--border);
+	text-align: center;
+	padding: 25px;
+	color: var(--text-muted);
+	margin-top: 80px;
+}
+
+/* ===== TOASTS ===== */
+.toastify-container {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 9999;
+}
+
+.toastify {
+	min-width: 300px;
+	padding: 14px 18px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	color: #fff;
+	font-weight: 600;
+	box-shadow: 0 20px 45px rgba(0, 0, 0, .7);
+	animation: slideIn .4s ease;
+}
+
+.toastify.success {
+	background: linear-gradient(135deg, #22c55e, #16a34a)
+}
+
+.toastify.error {
+	background: linear-gradient(135deg, #ff4081, #ff6a6a)
+}
+
+.toastify-close {
+	background: rgba(255, 255, 255, .25);
+	border: none;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	color: #fff;
+	font-weight: 700;
+}
+
+@keyframes slideIn {
+	from { transform: translateX(400px); opacity: 0 }
+	to { transform: translateX(0); opacity: 1 }
+}
+
+</style>
+</head>
+<body>
+
+	<!-- NAVBAR -->
+	<nav class="navbar navbar-expand-lg">
+		<a class="navbar-brand" href="/">🎬 BookMyTicket</a>
+		<div class="collapse navbar-collapse justify-content-end">
+			<div th:if="${session.user != null}" class="d-flex align-items-center">
+				<span class="me-3 fw-semibold" th:text="'Hello, ' + ${session.user.name}"></span>
+				<a href="/main" class="btn btn-outline-light me-2">Back to Movies</a>
+				<a href="/logout" class="btn btn-primary">Logout</a>
+			</div>
+		</div>
+	</nav>
+
+	<!-- TOASTS -->
+	<div class="toastify-container">
+		<div th:if="${pass}" class="toastify success">
+			<span th:text="${pass}"></span>
+			<button class="toastify-close" onclick="this.parentElement.remove()">×</button>
+		</div>
+		<div th:if="${fail}" class="toastify error">
+			<span th:text="${fail}"></span>
+			<button class="toastify-close" onclick="this.parentElement.remove()">×</button>
+		</div>
+	</div>
+
+	<div class="container mt-5">
+		<h2 class="mb-5 fw-bold text-center">My Bookings</h2>
+
+		<div class="row" th:if="${!tickets.isEmpty()}">
+			<div class="col-md-6" th:each="ticket : ${tickets}">
+				<div class="booking-card p-4">
+					<div class="d-flex justify-content-between align-items-start mb-3">
+						<div>
+							<h4 class="fw-bold mb-1" th:text="${ticket.movieName}"></h4>
+							<p class="text-muted mb-0" th:text="${ticket.theaterName} + ' - ' + ${ticket.screenName}"></p>
+						</div>
+						<div class="badge-custom" th:text="${ticket.ticketCount} + ' Tickets'"></div>
+					</div>
+
+					<div class="row align-items-center">
+						<div class="col-sm-7">
+							<p class="mb-2"><strong>Date:</strong> <span th:text="${ticket.showDate}"></span></p>
+							<p class="mb-2"><strong>Time:</strong> <span th:text="${ticket.showTiming}"></span></p>
+							<p class="mb-2"><strong>Seats:</strong> <span th:text="${#strings.arrayJoin(ticket.seatNumber, ', ')}"></span></p>
+							<p class="mb-2"><strong>Total Paid:</strong> <span th:text="'₹' + ${ticket.ticketPrice * ticket.ticketCount}"></span></p>
+							<p class="mb-0 text-muted small">ID: <span th:text="${ticket.orderId}"></span></p>
+						</div>
+						<div class="col-sm-5 text-center">
+							<div class="qr-section">
+								<img th:src="${ticket.qrUrl}" alt="Ticket QR">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="text-center py-5" th:if="${tickets.isEmpty()}">
+			<h4 class="text-muted">You haven't booked any tickets yet.</h4>
+			<a href="/main" class="btn btn-primary mt-3">Book Now</a>
+		</div>
+	</div>
+
+	<footer>
+		<p>© 2025 BookMyTicket — All Rights Reserved</p>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

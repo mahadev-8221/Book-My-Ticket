@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ticket Confirmation | BookMyTicket</title>
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap"
+	rel="stylesheet">
+
+<style>
+:root {
+	--bg-main: #0f172a;
+	--bg-card: #111827;
+	--border: #1f2937;
+	--text-main: #e5e7eb;
+	--text-muted: #9ca3af;
+	--accent: #22c55e;
+	--accent-pink: #10b981;
+}
+
+body {
+	font-family: "Poppins", sans-serif;
+	background: radial-gradient(circle at top, #1e293b, var(--bg-main));
+	color: var(--text-main);
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.ticket-card {
+	background: linear-gradient(180deg, #111827, #0b1220);
+	border: 1px solid var(--border);
+	border-radius: 24px;
+	width: 100%;
+	max-width: 500px;
+	box-shadow: 0 40px 100px rgba(0, 0, 0, .8);
+	overflow: hidden;
+	animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ticket-header {
+	background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+	padding: 30px;
+	text-align: center;
+	color: white;
+}
+
+.ticket-header h2 {
+	font-weight: 900;
+	margin-bottom: 5px;
+}
+
+.ticket-body {
+	padding: 40px;
+}
+
+.movie-title {
+	font-size: 1.8rem;
+	font-weight: 800;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.info-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	margin-bottom: 30px;
+}
+
+.info-item label {
+	display: block;
+	color: var(--text-muted);
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-bottom: 4px;
+}
+
+.info-item span {
+	font-weight: 600;
+	font-size: 1rem;
+}
+
+.qr-wrapper {
+	background: #fff;
+	padding: 15px;
+	border-radius: 20px;
+	margin: 0 auto 30px;
+	width: fit-content;
+}
+
+.qr-wrapper img {
+	width: 150px;
+	height: 150px;
+}
+
+.btn-home {
+	background: linear-gradient(135deg, #6496ff, #ff4081);
+	border: none;
+	width: 100%;
+	padding: 14px;
+	font-weight: 700;
+	border-radius: 12px;
+	color: white;
+	transition: 0.3s;
+}
+
+.btn-home:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 15px 30px rgba(100, 150, 255, 0.4);
+}
+
+@keyframes fadeInUp {
+	from { opacity: 0; transform: translateY(40px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+</style>
+</head>
+<body>
+
+	<div class="ticket-card">
+		<div class="ticket-header">
+			<h2>Booking Confirmed!</h2>
+			<p class="mb-0">Enjoy your movie experience</p>
+		</div>
+
+		<div class="ticket-body">
+			<div class="movie-title" th:text="${ticket.movieName}"></div>
+			<div class="text-center mb-4">
+				<span th:if="${ticket.status == 'PENDING'}" class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+					🕒 VERIFICATION PENDING
+				</span>
+				<span th:if="${ticket.status == 'CONFIRMED'}" class="badge bg-success px-3 py-2 rounded-pill fw-bold">
+					✅ BOOKING CONFIRMED
+				</span>
+				<span th:if="${ticket.status == 'REJECTED'}" class="badge bg-danger px-3 py-2 rounded-pill fw-bold">
+					❌ BOOKING REJECTED
+				</span>
+			</div>
+
+			<!-- QR CODE (Only show if confirmed) -->
+			<div class="qr-wrapper mb-4" th:if="${ticket.status == 'CONFIRMED'}">
+				<img th:src="${ticket.qrUrl}" alt="Ticket QR">
+				<p class="text-muted small mt-2">Scan for entry at theater</p>
+			</div>
+			
+			<div class="text-center p-4 rounded-4 mb-4" style="background: rgba(250, 204, 21, 0.05); border: 1px dashed var(--warning)" th:if="${ticket.status == 'PENDING'}">
+				<h6 class="text-warning fw-bold mb-2">Awaiting Admin Verification</h6>
+				<p class="text-muted small mb-0">Your payment is being verified. Your QR code will appear here once approved.</p>
+			</div>
+
+			<div class="info-grid">
+				<div class="info-item">
+					<label>Theater</label>
+					<span th:text="${ticket.theaterName}"></span>
+				</div>
+				<div class="info-item">
+					<label>Screen</label>
+					<span th:text="${ticket.screenName}"></span>
+				</div>
+				<div class="info-item">
+					<label>Date</label>
+					<span th:text="${ticket.showDate}"></span>
+				</div>
+				<div class="info-item">
+					<label>Time</label>
+					<span th:text="${ticket.showTiming}"></span>
+				</div>
+				<div class="info-item">
+					<label>Seats</label>
+					<span th:text="${#strings.arrayJoin(ticket.seatNumber, ', ')}"></span>
+				</div>
+				<div class="info-item">
+					<label>Price</label>
+					<span th:text="'₹' + ${ticket.ticketPrice * ticket.ticketCount}"></span>
+				</div>
+			</div>
+
+			<a href="/main" class="btn btn-home">Back to Dashboard</a>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

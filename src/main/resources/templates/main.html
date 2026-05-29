@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BookMyTicket</title>
+
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap"
+		rel="stylesheet">
+
+	<style>
+		:root {
+			--bg-main: #0f172a;
+			--bg-card: #111827;
+			--border: #1f2937;
+			--text-main: #e5e7eb;
+			--text-muted: #9ca3af;
+			--accent: #6496ff;
+			--accent-pink: #ff4081;
+		}
+
+		/* ===== GLOBAL ===== */
+		body {
+			font-family: "Poppins", sans-serif;
+			background: radial-gradient(circle at top, #1e293b, var(--bg-main));
+			color: var(--text-main);
+			min-height: 100vh;
+		}
+
+		/* ===== NAVBAR ===== */
+		.navbar {
+			background: rgba(17, 24, 39, .85) !important;
+			backdrop-filter: blur(14px);
+			border-bottom: 1px solid var(--border);
+			padding: .9rem 2rem;
+		}
+
+		.navbar-brand {
+			font-weight: 900;
+			font-size: 1.5rem;
+			background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.nav-link {
+			color: var(--text-muted) !important;
+			font-weight: 600;
+		}
+
+		.nav-link:hover {
+			color: var(--accent-pink) !important
+		}
+
+		/* ===== HERO ===== */
+		.hero {
+			padding: 100px 20px;
+			text-align: center;
+			position: relative;
+		}
+
+		.hero h1 {
+			font-size: 3.2rem;
+			font-weight: 900;
+			background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.hero p {
+			color: var(--text-muted);
+			font-size: 1.15rem;
+			margin-top: 10px;
+		}
+
+		.hero .btn {
+			margin-top: 25px;
+			padding: 14px 36px;
+			font-weight: 700;
+			border-radius: 14px;
+			background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+			border: none;
+			box-shadow: 0 15px 35px rgba(100, 150, 255, .45);
+		}
+
+		.hero .btn:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 25px 55px rgba(100, 150, 255, .6);
+		}
+
+		/* ===== MOVIES ===== */
+		#movies {
+			padding: 90px 0;
+		}
+
+		#movies h2 {
+			text-align: center;
+			font-weight: 900;
+			margin-bottom: 60px;
+		}
+
+		/* ===== MOVIE CARD ===== */
+		.movie-card {
+			background: linear-gradient(180deg, #111827, #0b1220);
+			border: 1px solid var(--border);
+			border-radius: 18px;
+			overflow: hidden;
+			box-shadow: 0 20px 45px rgba(0, 0, 0, .6);
+			transition: .4s ease;
+			height: 100%;
+		}
+
+		.movie-card:hover {
+			transform: translateY(-10px) scale(1.02);
+			box-shadow: 0 35px 80px rgba(0, 0, 0, .8);
+			border-color: var(--accent);
+		}
+
+		.movie-card img {
+			height: 280px;
+			object-fit: cover;
+		}
+
+		.movie-card .card-body {
+			padding: 22px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.movie-card h5 {
+			font-weight: 700;
+			margin-bottom: 6px;
+		}
+
+		.movie-card .text-muted {
+			color: var(--text-muted) !important;
+			font-size: .9rem;
+		}
+
+		.movie-card .btn {
+			margin-top: auto;
+			border-radius: 12px;
+			background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+			border: none;
+			font-weight: 700;
+		}
+
+		/* ===== BUTTONS ===== */
+		.btn-outline-light {
+			border: 2px solid var(--accent);
+			color: var(--accent);
+			font-weight: 700;
+		}
+
+		.btn-outline-light:hover {
+			background: var(--accent);
+			color: #fff;
+		}
+
+		.btn-danger {
+			background: linear-gradient(135deg, #ff4d4d, #ff1e1e);
+			border: none;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+			border: none;
+		}
+
+		/* ===== FOOTER ===== */
+		footer {
+			border-top: 1px solid var(--border);
+			text-align: center;
+			padding: 25px;
+			color: var(--text-muted);
+			margin-top: 80px;
+		}
+
+		/* ===== TOASTS ===== */
+		.toastify-container {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			z-index: 9999;
+		}
+
+		.toastify {
+			min-width: 300px;
+			padding: 14px 18px;
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			color: #fff;
+			font-weight: 600;
+			box-shadow: 0 20px 45px rgba(0, 0, 0, .7);
+			animation: slideIn .4s ease;
+		}
+
+		.toastify.success {
+			background: linear-gradient(135deg, #22c55e, #16a34a)
+		}
+
+		.toastify.error {
+			background: linear-gradient(135deg, #ff4081, #ff6a6a)
+		}
+
+		.toastify-close {
+			background: rgba(255, 255, 255, .25);
+			border: none;
+			width: 26px;
+			height: 26px;
+			border-radius: 50%;
+			color: #fff;
+			font-weight: 700;
+		}
+
+		@ keyframes slideIn {
+			from {
+				transform: translateX(400px);
+				opacity: 0
+			}
+
+			to {
+				transform: translateX(0);
+				opacity: 1
+			}
+
+		}
+
+		@media (max-width :768px) {
+			.hero h1 {
+				font-size: 2.2rem
+			}
+
+			.movie-card img {
+				height: 230px
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- NAVBAR -->
+	<nav class="navbar navbar-expand-lg">
+		<a class="navbar-brand" href="/">🎬 BookMyTicket</a>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div id="navMenu" class="collapse navbar-collapse justify-content-end">
+
+			<div th:if="${session.user == null}">
+				<a href="/login" class="btn btn-outline-light me-2">Login</a> <a href="/register"
+					class="btn btn-primary">Register</a>
+			</div>
+
+			<div th:if="${session.user != null}" class="d-flex align-items-center">
+				<span class="me-3 fw-semibold" th:text="'Hello, ' + ${session.user.name}"></span> <a
+					th:if="${session.user.role=='USER'}" href="/bookings" class="btn btn-outline-light me-2">My
+					Bookings</a> <a th:if="${session.user.role=='ADMIN'}" href="/manage-movies"
+					class="btn btn-danger me-2">Manage Movies</a> <a th:if="${session.user.role=='ADMIN'}"
+					href="/manage-theaters" class="btn btn-danger me-2">Manage Theaters</a> <a
+					th:if="${session.user.role=='ADMIN'}" href="/manage-users" class="btn btn-danger me-2">Manage
+					Users</a> <a th:if="${session.user.role=='ADMIN'}" href="/manage-all-bookings"
+					class="btn btn-danger me-2">Manage All Bookings</a> <a href="/logout"
+					class="btn btn-primary">Logout</a>
+			</div>
+
+		</div>
+	</nav>
+
+	<!-- TOASTS -->
+	<div class="toastify-container">
+		<div th:if="${pass}" class="toastify success">
+			<span th:text="${pass}"></span>
+		</div>
+		<div th:if="${fail}" class="toastify error">
+			<span th:text="${fail}"></span>
+		</div>
+	</div>
+
+	<!-- HERO -->
+	<section class="hero">
+		<h1>Book Your Favorite Movies</h1>
+		<p>Fast • Secure • Premium Experience</p>
+
+		<div class="row justify-content-center mt-4">
+			<div class="col-md-6">
+				<form action="/search" method="get" class="d-flex gap-2">
+					<input type="text" name="query" class="form-control" placeholder="🔍 Search for movies..."
+						th:value="${query}">
+					<button class="btn btn-primary px-4 mt-0">Search</button>
+				</form>
+			</div>
+		</div>
+
+		<a th:if="${query == null}" href="#movies" class="btn mt-5">Browse Movies</a>
+	</section>
+
+	<!-- MOVIES -->
+	<section class="container" id="movies">
+		<h2 th:text="${query != null ? 'Search Results for &quot;' + query + '&quot;' : 'Now Showing'}"></h2>
+
+		<div th:if="${movies.isEmpty()}" class="text-center py-5">
+			<h4 class="text-muted">No movies found matching your search.</h4>
+			<a href="/" class="btn btn-outline-light mt-3">View All Movies</a>
+		</div>
+
+		<div class="row g-4" th:if="${!movies.isEmpty()}">
+			<div class="col-lg-3 col-md-4 col-sm-6" th:each="movie:${movies}">
+				<div class="movie-card">
+					<img th:src="${movie.imageLink}">
+					<div class="card-body">
+						<h5 th:text="${movie.name}"></h5>
+						<p class="text-muted">
+							<span th:text="${movie.genre}"></span> • <span th:text="${movie.duration}"></span> hrs
+						</p>
+						<a th:href="'/book/movie/'+${movie.id}" class="btn btn-primary w-100">Book Now</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<footer>
+		<p>© 2025 BookMyTicket — All Rights Reserved</p>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			document.querySelectorAll('.toastify').forEach(t => {
+				const btn = document.createElement('button');
+				btn.className = 'toastify-close';
+				btn.innerHTML = '×';
+				t.appendChild(btn);
+
+				btn.onclick = () => {
+					t.style.opacity = '0';
+					t.style.transform = 'translateX(400px)';
+					t.style.transition = 'all 0.3s ease';
+					setTimeout(() => t.remove(), 300);
+				};
+
+				setTimeout(() => {
+					if (document.body.contains(t)) {
+						t.style.opacity = '0';
+						t.style.transform = 'translateX(400px)';
+						t.style.transition = 'all 0.3s ease';
+						setTimeout(() => t.remove(), 300);
+					}
+				}, 3500);
+			});
+		});
+	</script>
+</body>
+
+</html>

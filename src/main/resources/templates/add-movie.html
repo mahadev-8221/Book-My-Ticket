@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Movie - BookMyTicket Admin</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<!-- Bootstrap -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- Google Font -->
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap"
+	rel="stylesheet">
+
+<style>
+:root {
+	--bg-main: #0f172a;
+	--bg-card: #111827;
+	--border-soft: #1f2937;
+	--text-main: #e5e7eb;
+	--text-muted: #9ca3af;
+	--accent: #e74c3c;
+	--accent-2: #f59e0b;
+	--danger: #ef4444;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Poppins", sans-serif;
+	background: radial-gradient(circle at top, #1e293b, var(--bg-main));
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-main);
+	padding: 20px;
+}
+
+/* Container */
+.form-container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Card */
+.form-box {
+	width: 100%;
+	max-width: 560px;
+	padding: 45px;
+	background: linear-gradient(180deg, #111827, #0b1220);
+	border-radius: 18px;
+	border: 1px solid var(--border-soft);
+	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+	animation: fadeInUp 0.6s ease;
+}
+
+h1 {
+	text-align: center;
+	margin-bottom: 35px;
+	font-weight: 800;
+	font-size: 1.9rem;
+	letter-spacing: 0.5px;
+}
+
+/* Form */
+.form-group {
+	margin-bottom: 22px;
+}
+
+label {
+	margin-bottom: 6px;
+	font-weight: 600;
+	color: var(--text-main);
+	font-size: 0.9rem;
+}
+
+.form-control, .form-file {
+	background: #020617;
+	border: 1px solid var(--border-soft);
+	border-radius: 10px;
+	padding: 11px 14px;
+	color: var(--text-main);
+	font-size: 0.9rem;
+	transition: all 0.25s ease;
+}
+
+.form-control::placeholder {
+	color: var(--text-muted);
+}
+
+.form-control:focus, .form-file:focus {
+	background: #020617;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+	outline: none;
+	color: var(--text-main);
+}
+
+textarea.form-control {
+	resize: none;
+}
+
+/* File input */
+.form-file::file-selector-button {
+	background: linear-gradient(135deg, var(--accent), var(--accent-2));
+	color: white;
+	border: none;
+	padding: 7px 14px;
+	border-radius: 6px;
+	font-weight: 600;
+	margin-right: 10px;
+	cursor: pointer;
+	transition: all 0.25s ease;
+}
+
+.form-file::file-selector-button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 6px 15px rgba(231, 76, 60, 0.35);
+}
+
+/* Errors */
+.error-text {
+	color: var(--danger);
+	font-size: 0.8rem;
+	margin-top: 5px;
+	font-weight: 600;
+}
+
+/* Buttons */
+.button-group {
+	display: flex;
+	gap: 14px;
+	margin-top: 30px;
+}
+
+.btn-submit {
+	flex: 1;
+	background: linear-gradient(135deg, var(--accent), #ff6b5a);
+	border: none;
+	color: white;
+	font-weight: 600;
+	padding: 12px;
+	border-radius: 10px;
+	transition: all 0.25s ease;
+}
+
+.btn-submit:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 30px rgba(231, 76, 60, 0.4);
+}
+
+.btn-cancel {
+	flex: 1;
+	background: transparent;
+	border: 1px solid var(--border-soft);
+	color: var(--text-muted);
+	font-weight: 600;
+	padding: 12px;
+	border-radius: 10px;
+	text-align: center;
+	text-decoration: none;
+	transition: all 0.25s ease;
+}
+
+.btn-cancel:hover {
+	border-color: var(--accent);
+	color: var(--accent);
+}
+
+/* Toasts */
+.toastify-container {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 9999;
+}
+
+.toastify {
+	min-width: 280px;
+	padding: 14px 18px;
+	border-radius: 10px;
+	color: white;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+	margin-bottom: 10px;
+	animation: toastSlideIn 0.35s ease;
+}
+
+.toastify.success {
+	background: #16a34a;
+}
+
+.toastify.error {
+	background: #dc2626;
+}
+
+.toastify-close {
+	background: rgba(255, 255, 255, 0.25);
+	border: none;
+	color: white;
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+@keyframes toastSlideIn {from { transform:translateX(400px);
+	opacity: 0;
+}
+
+to {
+	transform: translateX(0);
+	opacity: 1;
+}
+
+}
+@keyframes fadeInUp {from { opacity:0;
+	transform: translateY(25px);
+}
+
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+}
+@media ( max-width : 768px) {
+	.form-box {
+		padding: 30px;
+	}
+	.button-group {
+		flex-direction: column;
+	}
+}
+</style>
+</head>
+
+<body>
+
+	<!-- TOASTS -->
+	<div class="toastify-container">
+		<div th:if="${pass}" class="toastify success">
+			<span th:text="${pass}"></span>
+		</div>
+		<div th:if="${fail}" class="toastify error">
+			<span th:text="${fail}"></span>
+		</div>
+	</div>
+
+	<div class="form-container">
+		<div class="form-box">
+			<h1>🎬 Add Movie</h1>
+
+			<form action="/add-movie" method="post" th:object="${movieDto}"
+				enctype="multipart/form-data">
+
+				<div class="form-group">
+					<label>Movie Name *</label> <input class="form-control"
+						th:field="*{name}" placeholder="Enter movie name"> <span
+						class="error-text" th:errors="*{name}"></span>
+				</div>
+
+				<div class="form-group">
+					<label>Genre *</label> <input class="form-control"
+						th:field="*{genre}" placeholder="Action, Drama"> <span
+						class="error-text" th:errors="*{genre}"></span>
+				</div>
+
+				<div class="form-group">
+					<label>Languages *</label> <input class="form-control"
+						th:field="*{languages}" placeholder="English, Hindi"> <span
+						class="error-text" th:errors="*{languages}"></span>
+				</div>
+
+				<div class="form-group">
+					<label>Duration *</label> <input type="time" class="form-control"
+						th:field="*{duration}"> <span class="error-text"
+						th:errors="*{duration}"></span>
+				</div>
+
+				<div class="form-group">
+					<label>Poster *</label> <input type="file" class="form-file"
+						th:field="*{image}" accept="image/*"> <span
+						class="error-text" th:errors="*{image}"></span>
+				</div>
+
+				<div class="form-group">
+					<label>Trailer Link</label> <input class="form-control"
+						th:field="*{trailerLink}" placeholder="https://youtube.com/...">
+				</div>
+
+				<div class="form-group">
+					<label>Description *</label>
+					<textarea class="form-control" rows="3" th:field="*{description}"></textarea>
+					<span class="error-text" th:errors="*{description}"></span>
+				</div>
+
+				<div class="form-group">
+					<label>Release Date *</label> <input type="date"
+						class="form-control" th:field="*{releaseDate}"> <span
+						class="error-text" th:errors="*{releaseDate}"></span>
+				</div>
+
+				<div class="form-group">
+					<label>Cast *</label> <input class="form-control"
+						th:field="*{cast}" placeholder="Actor 1, Actor 2"> <span
+						class="error-text" th:errors="*{cast}"></span>
+				</div>
+
+				<div class="button-group">
+					<button class="btn-submit">Add Movie</button>
+					<a href="/manage-movies" class="btn-cancel">Cancel</a>
+				</div>
+
+			</form>
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
